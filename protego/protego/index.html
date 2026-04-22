@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Protego · Matriz de Riesgos y Cobertura de EPP">
+  <meta name="theme-color" content="#0b0d12">
+  <title>Protego · Matriz de Riesgos</title>
+
+  <!-- Fuentes distintivas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ========= Header ========= -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark">P</div>
+        <div class="brand-text">
+          <span class="name">Protego</span>
+          <span class="tag">SGSST · Matriz de Riesgos</span>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="pill"><span class="dot"></span><span id="status-mode">Inicializando…</span></span>
+        <span class="pill">v1.0.0</span>
+        <span class="pill">ISO 45001</span>
+      </div>
+    </header>
+
+    <!-- ========= Título ========= -->
+    <section class="page-title">
+      <h1>Gestión de <em>riesgos</em> por cargo</h1>
+      <p>Cruce de peligros identificados con los EPP requeridos, controles activos y cobertura real del inventario entregado a cada trabajador.</p>
+    </section>
+
+    <!-- ========= KPIs ========= -->
+    <section class="kpi-grid" aria-label="Resumen de riesgos">
+      <div class="kpi-card is-critical">
+        <div class="k-label">Nivel I · Crítico</div>
+        <div class="k-value" id="kpi-critico">—</div>
+        <div class="k-sub">Intervención inmediata</div>
+      </div>
+      <div class="kpi-card is-high">
+        <div class="k-label">Nivel II · Alto</div>
+        <div class="k-value" id="kpi-alto">—</div>
+        <div class="k-sub">Corrección &lt; 30 días</div>
+      </div>
+      <div class="kpi-card is-medium">
+        <div class="k-label">Nivel III · Medio</div>
+        <div class="k-value" id="kpi-medio">—</div>
+        <div class="k-sub">Seguimiento mensual</div>
+      </div>
+      <div class="kpi-card is-low">
+        <div class="k-label">Nivel IV · Bajo</div>
+        <div class="k-value" id="kpi-bajo">—</div>
+        <div class="k-sub">Control preventivo</div>
+      </div>
+      <div class="kpi-card">
+        <div class="k-label">Total evaluaciones</div>
+        <div class="k-value" id="kpi-total">—</div>
+        <div class="k-sub">Pares cargo–riesgo</div>
+      </div>
+    </section>
+
+    <!-- ========= Tabs ========= -->
+    <nav class="tabs" role="tablist">
+      <button class="tab active" id="tab-matriz"    data-view="matriz"    role="tab">
+        Matriz de riesgos <span class="count">0</span>
+      </button>
+      <button class="tab"        id="tab-grid"      data-view="grid"      role="tab">
+        Matriz NP × NC <span class="count">0</span>
+      </button>
+      <button class="tab"        id="tab-cobertura" data-view="cobertura" role="tab">
+        Semáforo de cobertura <span class="count">0</span>
+      </button>
+    </nav>
+
+    <!-- ========= Vista: Matriz ========= -->
+    <section class="view active" id="view-matriz">
+
+      <!-- Barra de herramientas -->
+      <div class="toolbar">
+        <div class="search">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input id="search-input" type="search" placeholder="Buscar cargo o riesgo…" autocomplete="off">
+        </div>
+
+        <div class="filter-group" role="tablist" aria-label="Filtrar por nivel">
+          <button class="filter-chip active" data-nivel="all">Todos</button>
+          <button class="filter-chip" data-nivel="I">I · Crítico</button>
+          <button class="filter-chip" data-nivel="II">II · Alto</button>
+          <button class="filter-chip" data-nivel="III">III · Medio</button>
+          <button class="filter-chip" data-nivel="IV">IV · Bajo</button>
+        </div>
+
+        <div class="select-wrap">
+          <select id="filter-cargo" aria-label="Filtrar por cargo">
+            <option value="">Todos los cargos</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tabla (desktop) -->
+      <div class="matrix-wrap">
+        <table class="matrix-table" aria-label="Matriz de riesgos">
+          <thead>
+            <tr>
+              <th scope="col">Cargo</th>
+              <th scope="col">Riesgo</th>
+              <th scope="col">Nivel</th>
+              <th scope="col">EPP requeridos</th>
+              <th scope="col">Controlado</th>
+              <th scope="col">Clasificación</th>
+            </tr>
+          </thead>
+          <tbody id="matrix-tbody">
+            <tr><td colspan="6" class="state"><span class="loader"></span>Cargando matriz…</td></tr>
+          </tbody>
+        </table>
+
+        <!-- Cards (mobile) -->
+        <div class="matrix-cards" id="matrix-cards">
+          <div class="state"><span class="loader"></span>Cargando matriz…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========= Vista: Matriz NP × NC ========= -->
+    <section class="view" id="view-grid">
+      <div class="rm-panel">
+        <h2 class="rm-title">Matriz de Riesgos</h2>
+        <div class="rm-subtitle">Probabilidad × Consecuencia · GTC 45</div>
+
+        <div class="rm-axis-top">NIVEL DE CONSECUENCIA (NC)</div>
+
+        <div class="rm-wrapper">
+          <div class="rm-axis-left">NIVEL DE PROBABILIDAD (NP)</div>
+
+          <div class="rm-grid" id="rm-grid">
+            <!-- Header row -->
+            <div class="rm-corner"></div>
+            <div class="rm-col-head">LEVE</div>
+            <div class="rm-col-head">MODERADA</div>
+            <div class="rm-col-head">GRAVE</div>
+            <div class="rm-col-head">MUY GRAVE</div>
+
+            <!-- Row MUY ALTA -->
+            <div class="rm-row-head">MUY ALTA</div>
+            <div class="rm-cell" data-cell="MUY ALTA|LEVE"></div>
+            <div class="rm-cell" data-cell="MUY ALTA|MODERADA"></div>
+            <div class="rm-cell" data-cell="MUY ALTA|GRAVE"></div>
+            <div class="rm-cell" data-cell="MUY ALTA|MUY GRAVE"></div>
+
+            <!-- Row ALTA -->
+            <div class="rm-row-head">ALTA</div>
+            <div class="rm-cell" data-cell="ALTA|LEVE"></div>
+            <div class="rm-cell" data-cell="ALTA|MODERADA"></div>
+            <div class="rm-cell" data-cell="ALTA|GRAVE"></div>
+            <div class="rm-cell" data-cell="ALTA|MUY GRAVE"></div>
+
+            <!-- Row MEDIA -->
+            <div class="rm-row-head">MEDIA</div>
+            <div class="rm-cell" data-cell="MEDIA|LEVE"></div>
+            <div class="rm-cell" data-cell="MEDIA|MODERADA"></div>
+            <div class="rm-cell" data-cell="MEDIA|GRAVE"></div>
+            <div class="rm-cell" data-cell="MEDIA|MUY GRAVE"></div>
+
+            <!-- Row BAJA -->
+            <div class="rm-row-head">BAJA</div>
+            <div class="rm-cell" data-cell="BAJA|LEVE"></div>
+            <div class="rm-cell" data-cell="BAJA|MODERADA"></div>
+            <div class="rm-cell" data-cell="BAJA|GRAVE"></div>
+            <div class="rm-cell" data-cell="BAJA|MUY GRAVE"></div>
+          </div>
+        </div>
+
+        <div class="rm-legend">
+          <span class="rm-legend__item"><span class="rm-legend__dot lvl-IV"></span>  IV (Bajo)</span>
+          <span class="rm-legend__item"><span class="rm-legend__dot lvl-III"></span> III (Medio)</span>
+          <span class="rm-legend__item"><span class="rm-legend__dot lvl-II"></span>  II (Alto)</span>
+          <span class="rm-legend__item"><span class="rm-legend__dot lvl-I"></span>   I (Muy Alto)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========= Vista: Cobertura ========= -->
+    <section class="view" id="view-cobertura">
+
+      <div class="kpi-grid" style="margin-top:4px;">
+        <div class="kpi-card is-low">
+          <div class="k-label">Cobertura completa</div>
+          <div class="k-value" id="cov-verde">—</div>
+          <div class="k-sub">Trabajadores al 100 %</div>
+        </div>
+        <div class="kpi-card is-medium">
+          <div class="k-label">Cobertura parcial</div>
+          <div class="k-value" id="cov-amarillo">—</div>
+          <div class="k-sub">Entre 70 % y 99 %</div>
+        </div>
+        <div class="kpi-card is-critical">
+          <div class="k-label">Cobertura crítica</div>
+          <div class="k-value" id="cov-rojo">—</div>
+          <div class="k-sub">Menos del 70 %</div>
+        </div>
+        <div class="kpi-card">
+          <div class="k-label">Promedio global</div>
+          <div class="k-value" id="cov-promedio">—</div>
+          <div class="k-sub">EPP entregados vs requeridos</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="filter-group" role="tablist" aria-label="Filtrar por semáforo">
+          <button class="filter-chip active" data-sem="all">Todos</button>
+          <button class="filter-chip" data-sem="verde">🟢 Verde</button>
+          <button class="filter-chip" data-sem="amarillo">🟡 Amarillo</button>
+          <button class="filter-chip" data-sem="rojo">🔴 Rojo</button>
+        </div>
+      </div>
+
+      <div class="coverage-grid" id="coverage-grid">
+        <div class="state"><span class="loader"></span>Cargando cobertura…</div>
+      </div>
+    </section>
+
+    <!-- ========= Footer ========= -->
+    <footer class="app-footer">
+      <span>Protego · SG-SST · Matriz de Riesgos</span>
+      <span>HTML · CSS · JS · PHP · PostgreSQL</span>
+    </footer>
+
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
